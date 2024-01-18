@@ -3,12 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    public Transform gameEnd;
-
     void Update()
-    {if (!PlayerScript.player)
-        {
-            SceneManager.LoadScene("GAME");
-        }
+    {
+        if (!PlayerScript._playerObject)
+            {
+                RestartGame();
+            }
+    }
+
+    void RestartGame()
+    {
+        SceneManager.LoadScene("GAME");
     }
 }

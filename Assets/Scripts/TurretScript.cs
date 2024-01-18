@@ -2,23 +2,29 @@ using UnityEngine;
 
 public class TurretScript : MonoBehaviour
 {
-    public Transform bulletSpawn;
-    public float turretRange;
+    [SerializeField] private Transform _bulletSpawn;
+    [SerializeField] private float _turretRange;
+    [SerializeField] private float _turretFireRate;
+    [SerializeField] private float _turretTurnRate;
 
     void Update()
     {
-        Vector3 toPlayer = PlayerScript.player.gameObject.transform.position - bulletSpawn.position;
-        float dot = bulletSpawn.up.x * toPlayer.normalized.x + bulletSpawn.up.y * toPlayer.normalized.y;
-
-        if (toPlayer.magnitude <= turretRange && dot >= .99f)
-        {
-            Destroy(PlayerScript.player);
-        }
+        if (FindDistanceToObject().magnitude <= _turretRange && FindDotProduct(FindDistanceToObject()) >= .99f)
+            ShootBullet();
     }
 
-    private void OnDrawGizmos()
-    {   
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(bulletSpawn.position, bulletSpawn.position + bulletSpawn.up * (turretRange -.5f));
+    private Vector3 FindDistanceToObject()
+    {
+        return PlayerScript._playerObject.gameObject.transform.position - _bulletSpawn.position;
+    }
+
+    private float FindDotProduct(Vector3 _range)
+    {
+        return _bulletSpawn.up.x * _range.normalized.x + _bulletSpawn.up.y * _range.normalized.y;
+    }
+
+    void ShootBullet()
+    {
+        Destroy(PlayerScript._playerObject);
     }
 }
