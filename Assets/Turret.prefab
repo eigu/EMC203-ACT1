@@ -183,8 +183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d102b954d117e7c49a1490fab1fcf1a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bulletSpawn: {fileID: 5067723215599784856}
-  _turretRange: 5
+  bulletSpawn: {fileID: 5067723215599784856}
+  turretRange: 7
+  turretFireRate: 3
+  turretTurnRate: 3
 --- !u!1 &7868892451863166771
 GameObject:
   m_ObjectHideFlags: 0

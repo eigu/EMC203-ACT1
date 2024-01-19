@@ -5,10 +5,7 @@ public class LevelManager : MonoBehaviour
 {
     void Update()
     {
-        if (!PlayerScript._playerObject)
-            {
-                RestartGame();
-            }
+        if (PlayerScript.Instance.playerHealth <= 0) RestartGame();
     }
 
     void RestartGame()
