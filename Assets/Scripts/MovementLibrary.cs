@@ -34,20 +34,4 @@ public class MovementLibrary
 
         return returnVector;
     }
-
-    public static Vector3 Slerp(Vector3 startPoint, Vector3 endPoint, float time)
-    {
-        var clampedTime = Mathf.Clamp01(time);
-
-        float dot = startPoint.normalized.x * endPoint.normalized.x
-            + startPoint.normalized.y * endPoint.normalized.y
-            + startPoint.normalized.z * endPoint.normalized.z;
-
-        float theta = Mathf.Acos(dot);
-
-        var returnVector = (Mathf.Sin((1 - clampedTime * theta)) / Mathf.Sin(theta)) * startPoint
-            + (Mathf.Sin(clampedTime * theta) / Mathf.Sin(theta)) * endPoint;
-
-        return returnVector;
-    }
 }

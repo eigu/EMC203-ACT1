@@ -21,58 +21,57 @@ public class TurretScript : MonoBehaviour
         timeToFire -= Time.deltaTime;
 
         FindAndTargetEnemy();
-        CheckForEnemy();
     }
 
     void RotateTurret()
     {
+        if (targetEnemy == null) return;
+
         Vector3 directionToEnemy = targetEnemy.position - transform.position;
 
         if (directionToEnemy.magnitude > 0.1f)
         {
             directionToEnemy.z = 0;
-            transform.up = MovementLibrary.Slerp(transform.up, directionToEnemy.normalized, turretTurnRate * Time.deltaTime);
-        }
-    }
-
-    void CheckForEnemy()
-    {
-        if (targetEnemy == null)
-        {
-            return;
-        }
-
-        var distanceToEnemy = FindDistance(transform.position, targetEnemy.position);
-
-        if (distanceToEnemy.magnitude > turretRange)
-        {
-            targetEnemy = null;
-        }
-
-        if (distanceToEnemy.magnitude <= turretRange
-            && FindDotProduct(distanceToEnemy) >= 0.999f
-            && timeToFire <= 0f)
-        {
-            ShootLaser();
+            Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, directionToEnemy.normalized);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turretTurnRate);
         }
     }
 
     void FindAndTargetEnemy()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        targetEnemy = null;
+
+        float closestDistance = Mathf.Infinity;
 
         foreach (GameObject enemy in enemies)
         {
-            var distanceToEnemy = FindDistance(transform.position, enemy.transform.position);
+            var distanceToEnemy = enemy.transform.position - transform.position;
 
             if (distanceToEnemy.magnitude <= turretRange)
             {
-                targetEnemy = enemy.transform;
-                RotateTurret();
-                break;
+                if (targetEnemy == null || distanceToEnemy.magnitude < closestDistance)
+                {
+                    targetEnemy = enemy.transform;
+                    closestDistance = distanceToEnemy.magnitude;
+                }
             }
         }
 
+        CheckAndShoot();
+    }
+
+    void CheckAndShoot()
+    {
+        if (targetEnemy == null) return;
+
+        RotateTurret();
+
+        var distanceToEnemy = targetEnemy.position - transform.position;
+        if (FindDotProduct(distanceToEnemy) >= 0.99f && timeToFire <= 0f)
+        {
+            ShootLaser();
+        }
     }
 
     void ShootLaser()
@@ -97,11 +96,6 @@ public class TurretScript : MonoBehaviour
         yield return new WaitForSeconds(1 / turretFireRate);
 
         Destroy(lineRenderer);
-    }
-
-    Vector3 FindDistance(Vector3 startPoint, Vector3 endPoint)
-    {
-        return endPoint - startPoint;
     }
 
     float FindDotProduct(Vector3 distance)
